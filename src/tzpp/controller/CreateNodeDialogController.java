@@ -85,7 +85,7 @@ public class CreateNodeDialogController {
             } catch (Exception ex){
                 errorMessage += "Кількість ресурсу дуже велика!\n";
             }
-            if (inputNumber < 0 || inputNumber > 300)
+            if (inputNumber < 0 || inputNumber > 1000)
             errorMessage += "Кількість ресурсу має бути від 0 до 300\n";
         }
         if (errorMessage.length() == 0) {
