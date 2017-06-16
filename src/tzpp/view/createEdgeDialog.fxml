@@ -5,11 +5,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane minHeight="200.0" minWidth="300.0" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tzpp.controller.createEdgeDialogController">
-   <children>
+<AnchorPane maxHeight="200.0" maxWidth="300.0" minHeight="200.0" minWidth="300.0" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tzpp.controller.CreateEdgeDialogController">
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Label prefHeight="25.0" prefWidth="272.0" text="Заповніть характеристики вершини:" textAlignment="CENTER">
+            <Label prefHeight="25.0" prefWidth="272.0" text="Створити зв'язок:" textAlignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>
@@ -17,40 +15,59 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </VBox.margin>
             </Label>
-            <GridPane layoutX="21.0" layoutY="31.0" prefHeight="138.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <GridPane layoutX="21.0" layoutY="31.0" prefHeight="100.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.0" minWidth="10.0" prefWidth="116.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.0" minWidth="10.0" prefWidth="184.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="156.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.0" minWidth="10.0" prefWidth="144.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="102.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="107.0" minHeight="10.0" prefHeight="62.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="14.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
               </rowConstraints>
-               <children>
-                  <Label text="Тип вершини">
+                  <Label text="З вершини">
                      <GridPane.margin>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets left="20.0" right="20.0" />
                      </GridPane.margin>
                   </Label>
-                  <ComboBox fx:id="typeComboBox" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1">
+                  <ComboBox fx:id="firstNodeComboBox" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1">
                      <GridPane.margin>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets left="20.0" right="20.0" />
                      </GridPane.margin>
                   </ComboBox>
-                  <TextField fx:id="numberTextField" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="valueTextField" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <GridPane.margin>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets left="20.0" right="20.0" />
                      </GridPane.margin>
                   </TextField>
-                  <Label text="Ресурс" GridPane.rowIndex="1">
+                  <Label text="Транспортні витрати" GridPane.rowIndex="2">
                      <GridPane.margin>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets left="20.0" />
                      </GridPane.margin>
                   </Label>
-               </children>
+                  <Label text="У вершину" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="20.0" right="20.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <ComboBox fx:id="secondNodeComboBox" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="20.0" right="20.0" />
+                     </GridPane.margin>
+                  </ComboBox>
             </GridPane>
-         </children>
+            <HBox alignment="TOP_RIGHT" prefHeight="51.0" prefWidth="300.0">
+
+                  <Button mnemonicParsing="false" onAction="#handleOk" text="Додати">
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#handleCancel" text="Відмінити">
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+            </HBox>
       </VBox>
-   </children>
 </AnchorPane>
