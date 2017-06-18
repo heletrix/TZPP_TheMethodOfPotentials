@@ -36,8 +36,8 @@ public class Edge implements Serializable {
     public void setValue(Integer value) {
         this.value = value;
     }
-//
-//    public String toString(){
-//        return "[" + firstNode.getId() + "; " + secondNode.getId() + "] (" + value + ") ";
-//    }
+
+    public String toString(){
+        return "[" + firstNode.getId() + "; " + secondNode.getId() + "] (" + value + ") ";
+    }
 }

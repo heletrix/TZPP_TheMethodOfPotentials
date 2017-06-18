@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class MainController {
+
     @FXML
     private TextArea textAreaMPZK;
     @FXML
@@ -39,13 +40,22 @@ public class MainController {
     @FXML
     private Canvas canvasMPZK;
     @FXML
+    private Canvas canvasMethodOfPotentials;
+    @FXML
     private TabPane mainTabPane;
     @FXML
     private Tab tabTZLP;
     @FXML
-    private TextArea textAreaTZLP;
+    private Tab tabMP;
     @FXML
     private  Tab tabMPZK;
+    @FXML
+    private TextArea textAreaTZLP;
+    private static Double M = 1000.0;
+
+    public static Double getM() {
+        return M;
+    }
 
     private GraphicsContext gcGraph;
     private GraphicsContext gcTZLP;
@@ -303,7 +313,6 @@ public class MainController {
     @FXML
     private void findDBRbyMPZK(){
         if(textAreaTZLP.getText().length() > 0){
-
             GraphicsContext gcMPZK = canvasMPZK.getGraphicsContext2D();
             gcMPZK.clearRect(0,0,canvasMPZK.getWidth(),canvasMPZK.getHeight());
 
@@ -311,10 +320,19 @@ public class MainController {
             MPZK = new MPZKmodel(tzlpModel);
             MPZK.getSolution();
 
-
             MPZK.drawSolution(gcMPZK, circleSize);
             textAreaMPZK.setText(MPZK.getTransportCost());
         }
         else Common.showErrorWindow("Спочатку перетворіть в ТЗЛП!", getStage());
+    }
+    @FXML
+    private void solveProblem() {
+           if(textAreaMPZK.getText().length() > 0){
+               MethodOfPotentials mp = new MethodOfPotentials(MPZK, canvasMethodOfPotentials);
+               mainTabPane.getSelectionModel().select(tabMP);
+               mp.findAndDraw();
+           } else {
+               Common.showErrorWindow("Спочатку знайдіть початковий ДБР!", getStage());
+           }
     }
 }

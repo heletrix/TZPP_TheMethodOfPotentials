@@ -9,19 +9,33 @@ import java.util.ArrayList;
 
 public class MPZKmodel {
 
-    private TZLPmodel TZLP;
-    private ArrayList<Double> a;
-    private ArrayList<Double> b;
-    private ArrayList<Pair<Edge, Double>> dbr;
+    private TZLPmodel TZLP;                     // транспортна задача лінійного програмування
+    private ArrayList<Double> a;                // запаси виробників
+    private ArrayList<Double> b;                // потреби споживачів
+    private ArrayList<Pair<Edge, Double>> dbr;  // допустимий базисний розв'язок
+    private Double F;                            // цільова функція
+    private Double[][] X;
 
     public MPZKmodel(TZLPmodel TZLP) {
         this.TZLP = TZLP;
         this.a = new ArrayList<>();
         this.b = new ArrayList<>();
         this.dbr = new ArrayList<>();
+        X = new Double[TZLP.getOutputNodes().size()][TZLP.getInputNodes().size()];
+        for (int i = 0; i < X[0].length; i++)
+            for (int j = 0; j < X[1].length; j++)
+                X[i][j] = null;
     }
 
-    public TZLPmodel getTZLP() {
+    Double[][] getX() {
+        return X;
+    }
+
+    Double getF() {
+        return F;
+    }
+
+    TZLPmodel getTZLP() {
         return TZLP;
     }
 
@@ -61,16 +75,18 @@ public class MPZKmodel {
         while (i != a.size() - 1 || j != b.size() - 1) {
             if (a.get(i) >= b.get(j)) {
                 dbr.add(new Pair<>(getEdgeByIndexes(i, j), b.get(j)));
+                X[i][j] = b.get(j);
                 a.set(i, a.get(i) - (b.get(j)));
                 j++;
             } else {
                 dbr.add(new Pair<>(getEdgeByIndexes(i, j), a.get(i)));
+                X[i][j]=a.get(i);
                 b.set(j, b.get(j) - (a.get(i)));
                 i++;
             }
         }
         dbr.add(new Pair<>(getEdgeByIndexes(i, j), a.get(i)));
-
+        X[i][j]=a.get(i);
     }
 
     public void drawSolution(GraphicsContext gc, Integer size) {
@@ -82,7 +98,7 @@ public class MPZKmodel {
                 e.getKey().getSecondNode().getId().equals(edge.getSecondNode().getId())).findFirst()
                         .map(n -> n.getValue().toString()).orElseGet(() -> " ");
                 drawMPZKCell(gc, size, Color.LIGHTYELLOW, j + 1, i + 1,
-                        TZLP.getTableTZLP()[i][j].getValue().toString(), str);
+                        TZLP.getTableTZLP()[i][j].getCosts().toString(), str);
             }
         }
     }
@@ -101,7 +117,7 @@ public class MPZKmodel {
 
     private Edge getEdgeByIndexes(int i, int j) {
         return new Edge(TZLP.getOutputNodes().get(i), TZLP.getInputNodes().get(j),
-                TZLP.getTableTZLP()[i][j].getValue().intValue());
+                TZLP.getTableTZLP()[i][j].getCosts().intValue());
     }
 
     // Підрахунок транспортних витрат

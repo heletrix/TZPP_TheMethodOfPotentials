@@ -2,13 +2,15 @@ package tzpp.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import tzpp.controller.MainController;
 
-public class TableCell extends AbstractCell{
-    private Double value;
+class TableCell extends AbstractCell{
+    // Транспортні витрати
+    private Double costs;
 
-    TableCell(GraphicsContext graphicsContext, Color color, Double value){
+    TableCell(GraphicsContext graphicsContext, Color color, Double costs){
         super(graphicsContext, color);
-        this.value = value;
+        this.costs = costs;
     }
 
     public GraphicsContext getGraphicsContext() {
@@ -33,18 +35,18 @@ public class TableCell extends AbstractCell{
         graphicsContext.setFill(fillColor);
         graphicsContext.fillRoundRect(cellSize*x + 1, cellSize*y + 1, cellSize - 1, cellSize - 1, 0, 0);
         graphicsContext.setFill(Color.BLACK);
-        if(value == Double.POSITIVE_INFINITY)
+        if(costs >= MainController.getM())
         graphicsContext.fillText("M", cellSize*x + 1, cellSize*(y+1) - cellSize/2.7);
         else {
-            graphicsContext.fillText(value.toString(), cellSize*x + 1, cellSize*(y+1) - cellSize/2.7);
+            graphicsContext.fillText(costs.toString(), cellSize*x + 1, cellSize*(y+1) - cellSize/2.7);
         }
     }
 
-    Double getValue() {
-        return value;
+    Double getCosts() {
+        return costs;
     }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setCosts(Double costs) {
+        this.costs = costs;
     }
 }

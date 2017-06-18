@@ -103,7 +103,7 @@
                               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                               AnchorPane.topAnchor="-0.0">
                             <TextArea fx:id="textAreaMPZK" editable="false" prefHeight="60.0" prefWidth="438.0"/>
-                            <Button mnemonicParsing="false" text="Метод потенціалів">
+                            <Button onAction="#solveProblem" mnemonicParsing="false" text="Метод потенціалів">
                                 <HBox.margin>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                                 </HBox.margin>
@@ -113,12 +113,12 @@
                 </SplitPane>
             </AnchorPane>
         </Tab>
-        <Tab text="Розв'язок">
+        <Tab fx:id="tabMP" text="Розв'язок">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <ScrollPane layoutX="107.0" layoutY="48.0" prefViewportHeight="200.0" prefViewportWidth="200.0"
                             AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                             AnchorPane.topAnchor="0.0">
-                    <Canvas height="2400.0" layoutX="107.0" layoutY="48.0" width="2400.0"/>
+                    <Canvas fx:id="canvasMethodOfPotentials" height="2400.0" layoutX="107.0" layoutY="48.0" width="2400.0"/>
                 </ScrollPane>
             </AnchorPane>
         </Tab>

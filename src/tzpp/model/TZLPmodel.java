@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Tab;
 import javafx.scene.paint.Color;
+import tzpp.controller.MainController;
 import tzpp.model.graphModel.Edge;
 import tzpp.model.graphModel.Node;
 
@@ -37,6 +38,10 @@ public class TZLPmodel {
         this.gc = canvas.getGraphicsContext2D();
         this.canvas = canvas;
         this.size = size;
+    }
+
+    Integer getSize() {
+        return size;
     }
 
     TableCell[][] getTableTZLP() {
@@ -152,7 +157,7 @@ public class TZLPmodel {
                 } else {
                     Double db = edges.stream().filter(e -> e.getFirstNode().getId().equals(firstId)
                             && e.getSecondNode().getId().equals(secondId)).findFirst()
-                            .map(e -> e.getValue().doubleValue()).orElseGet(() -> Double.POSITIVE_INFINITY);
+                            .map(e -> e.getValue().doubleValue()).orElseGet(MainController::getM);
                     tableTZLP[i][j] = new TableCell(gc, Color.LIGHTYELLOW, db);
                 }
             }
