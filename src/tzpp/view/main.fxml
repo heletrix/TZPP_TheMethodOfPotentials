@@ -15,7 +15,7 @@
                 <AnchorPane maxWidth="180.0" minHeight="0.0" minWidth="180.0" prefWidth="180.0">
                     <VBox layoutX="15.0" layoutY="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#addEdge"
+                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#showCreateEdgeDialog"
                                 prefHeight="25.0" prefWidth="140.0" text="Додати зв'язок" AnchorPane.leftAnchor="15.0"
                                 AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
                             <VBox.margin>
@@ -40,7 +40,7 @@
                                 <Insets left="20.0" right="20.0" top="20.0"/>
                             </VBox.margin>
                         </Button>
-                        <Button onAction="#clearGraphField" mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0"
+                        <Button mnemonicParsing="false" onAction="#clearGraphField" prefHeight="25.0" prefWidth="140.0"
                                 text="Очистити поле">
                             <VBox.margin>
                                 <Insets left="20.0" right="20.0" top="20.0"/>
@@ -58,41 +58,69 @@
             </SplitPane>
         </Tab>
         <Tab fx:id="tabTZLP" text="ТЗЛП">
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                        <SplitPane dividerPositions="0.1" layoutX="70.0" layoutY="14.0" orientation="VERTICAL"
-                                   prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0"
-                                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <AnchorPane prefHeight="240.0" prefWidth="598.0">
-                                        <ScrollPane prefViewportHeight="200.0" prefViewportWidth="200.0"
-                                                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                <Canvas fx:id="canvasTZLP" height="1200.0" layoutX="100.0"
-                                                        layoutY="-7.0" width="1200.0" AnchorPane.bottomAnchor="0.0"
-                                                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                        AnchorPane.topAnchor="0.0"/>
-                                        </ScrollPane>
-                                </AnchorPane>
-                                <AnchorPane maxHeight="100.0" minHeight="100.0" minWidth="0.0" prefHeight="330.0"
-                                            prefWidth="598.0">
-                                        <HBox maxHeight="100.0" prefHeight="100.0" prefWidth="200.0"
-                                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                <TextArea fx:id="textAreaTZLP" prefHeight="100.0" prefWidth="494.0"/>
-                                                <Button mnemonicParsing="false" text="МПЗК">
-                                                    <HBox.margin>
-                                                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0"/>
-                                                    </HBox.margin>
-                                                </Button>
-                                        </HBox>
-                                </AnchorPane>
-                        </SplitPane>
-                </AnchorPane>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <SplitPane dividerPositions="0.1" layoutX="70.0" layoutY="14.0" orientation="VERTICAL"
+                           prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <AnchorPane prefHeight="240.0" prefWidth="598.0">
+                        <ScrollPane prefViewportHeight="200.0" prefViewportWidth="200.0" AnchorPane.bottomAnchor="0.0"
+                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <Canvas fx:id="canvasTZLP" height="1200.0" layoutX="100.0" layoutY="-7.0" width="1200.0"
+                                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                        </ScrollPane>
+                    </AnchorPane>
+                    <AnchorPane maxHeight="60.0" minHeight="60.0" minWidth="0.0" prefHeight="60.0" prefWidth="598.0">
+                        <HBox layoutY="30.0" maxHeight="70.0" minHeight="60.0" prefHeight="70.0" prefWidth="598.0"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="0.0">
+                            <TextArea fx:id="textAreaTZLP" editable="false" maxHeight="60.0" minHeight="60.0"
+                                      prefHeight="60.0" prefWidth="494.0"/>
+                            <Button mnemonicParsing="false" onAction="#findDBRbyMPZK" text="МПЗК">
+                                <HBox.margin>
+                                    <Insets bottom="10.0" left="20.0" right="20.0" top="10.0"/>
+                                </HBox.margin>
+                            </Button>
+                        </HBox>
+                    </AnchorPane>
+                </SplitPane>
+            </AnchorPane>
         </Tab>
-        <Tab text="Початкова ДБР">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+        <Tab fx:id="tabMPZK" text="Початкова ДБР">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <SplitPane dividerPositions="0.5" layoutX="114.0" orientation="VERTICAL" prefHeight="200.0"
+                           prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                        <ScrollPane layoutX="132.0" layoutY="14.0" prefViewportHeight="200.0" prefViewportWidth="200.0"
+                                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <Canvas fx:id="canvasMPZK" height="1200.0" layoutX="132.0" layoutY="14.0" width="1200.0"/>
+                        </ScrollPane>
+                    </AnchorPane>
+                    <AnchorPane maxHeight="60.0" minHeight="60.0" minWidth="0.0" prefHeight="60.0" prefWidth="160.0">
+                        <HBox layoutX="24.0" layoutY="-36.0" prefHeight="100.0" prefWidth="200.0"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="-0.0">
+                            <TextArea fx:id="textAreaMPZK" editable="false" prefHeight="60.0" prefWidth="438.0"/>
+                            <Button mnemonicParsing="false" text="Метод потенціалів">
+                                <HBox.margin>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                                </HBox.margin>
+                            </Button>
+                        </HBox>
+                    </AnchorPane>
+                </SplitPane>
+            </AnchorPane>
         </Tab>
         <Tab text="Розв'язок">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <ScrollPane layoutX="107.0" layoutY="48.0" prefViewportHeight="200.0" prefViewportWidth="200.0"
+                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                            AnchorPane.topAnchor="0.0">
+                    <Canvas height="2400.0" layoutX="107.0" layoutY="48.0" width="2400.0"/>
+                </ScrollPane>
+            </AnchorPane>
         </Tab>
     </TabPane>
 </AnchorPane>

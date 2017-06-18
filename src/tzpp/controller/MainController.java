@@ -26,12 +26,10 @@ import tzpp.model.graphModel.NodeCircle;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class MainController {
-
+    @FXML
+    private TextArea textAreaMPZK;
     @FXML
     private AnchorPane mainAnchorPane;
     @FXML
@@ -39,24 +37,24 @@ public class MainController {
     @FXML
     private Canvas canvasTZLP;
     @FXML
+    private Canvas canvasMPZK;
+    @FXML
     private TabPane mainTabPane;
     @FXML
     private Tab tabTZLP;
     @FXML
     private TextArea textAreaTZLP;
+    @FXML
+    private  Tab tabMPZK;
 
     private GraphicsContext gcGraph;
     private GraphicsContext gcTZLP;
-//    private TableCell[][] tableTZLP;
     private ObservableList<Node> nodes = FXCollections.observableArrayList();
     private ObservableList<Edge> edges = FXCollections.observableArrayList();
     private TZLPmodel tzlpModel;
+    private MPZKmodel MPZK;
     // розмір кружечків
     private Integer circleSize;
-
-    private Stage getStage() {
-        return (Stage) mainAnchorPane.getScene().getWindow();
-    }
 
     public void initialize() {
         gcGraph = canvasGraphDraw.getGraphicsContext2D();
@@ -68,20 +66,33 @@ public class MainController {
         canvasGraphDraw.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
                 try {
-                    showCreateDialog(event);
+                    showCreateNodeDialog(event);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
             } else if (event.isSecondaryButtonDown()) {
                 setGraphColors(Color.DARKBLUE, Color.WHITESMOKE, 5);
-                drawOval(createOval(0, 2, event.getX(), event.getY()));
+                drawOval(addOval(0, 2, event.getX(), event.getY()));
             }
         });
 
     }
+    private Stage getStage() {
+        return (Stage) mainAnchorPane.getScene().getWindow();
+    }
+
+    // Створює сцену діалогового вікна.
+    private Stage createStage(String name, AnchorPane anchorPane) {
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle(name);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(getStage());
+        dialogStage.setScene(new Scene(anchorPane));
+        return dialogStage;
+    }
 
     // Відображує вікно додавання вершини
-    private void showCreateDialog(MouseEvent e) throws IOException {
+    private void showCreateNodeDialog(MouseEvent e) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("view/createNodeDialog.fxml"));
         Stage dialogStage = createStage("Додати вершину", loader.load());
@@ -94,19 +105,35 @@ public class MainController {
                 setGraphColors(Color.YELLOWGREEN, Color.YELLOWGREEN, 5);
             else // Якщо споживач
                 setGraphColors(Color.ORANGERED, Color.ORANGERED, 5);
-            drawOval(createOval(controller.getResourceNumber(), controller.getIndexType(), e.getX(), e.getY()));
+            drawOval(addOval(controller.getResourceNumber(), controller.getIndexType(), e.getX(), e.getY()));
+        }
+    }
+    // Відображує вікно додавання ребра
+    @FXML
+    private void showCreateEdgeDialog(ActionEvent actionEvent) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getResource("view/createEdgeDialog.fxml"));
+        Stage dialogStage = createStage("Додати ребро", loader.load());
+
+        CreateEdgeDialogController controller = loader.getController();
+        controller.initData(nodes, edges);
+        controller.setDialogStage(dialogStage);
+        dialogStage.showAndWait();
+        if (controller.isOkClicked()) {
+            Node node1 = controller.getFirstNode();
+            Node node2 = controller.getSecondNode();
+            Integer value = controller.getValueOfEdge();
+            // малюємо стрілку та додаємо до списку ребер
+            edges.add(new Edge(node1, node2, value));
+            drawArrow(node1.getNodeCircle().getX(), node1.getNodeCircle().getY(),
+                    node2.getNodeCircle().getX(), node2.getNodeCircle().getY(),
+                    value);
         }
     }
 
-    // змінює кольори графічного контексту графу
-    private void setGraphColors(Color cFill, Color cStroke, Integer lineWidth) {
-        gcGraph.setFill(cFill);
-        gcGraph.setStroke(cStroke);
-        gcGraph.setLineWidth(lineWidth);
-    }
-
     // Додає нову вершину
-    private Node createOval(Integer number, Integer type, double x, double y) {
+    private Node addOval(Integer number, Integer type, double x, double y) {
         Integer id = nodes.size() + 1;
         NodeCircle nodeCircle = new NodeCircle(x, y);
         Node node = new Node(nodeCircle, number, Node.NodeType.values()[type], id);
@@ -129,40 +156,6 @@ public class MainController {
             gcGraph.fillText(number.toString(), x + circleSize, y + 5);
         }
         gcGraph.fillText(id.toString(), x + (circleSize / 3), y - (circleSize / 3));
-    }
-
-    // Відкриває вікно додавання ребра
-    @FXML
-    private void addEdge(ActionEvent actionEvent) throws IOException {
-
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("view/createEdgeDialog.fxml"));
-        Stage dialogStage = createStage("Додати ребро", loader.load());
-
-        CreateEdgeDialogController controller = loader.getController();
-        controller.initData(nodes, edges);
-        controller.setDialogStage(dialogStage);
-        dialogStage.showAndWait();
-        if (controller.isOkClicked()) {
-            Node node1 = controller.getFirstNode();
-            Node node2 = controller.getSecondNode();
-            Integer value = controller.getValueOfEdge();
-            // малюємо стрілку та додаємо до списку ребер
-            edges.add(new Edge(node1, node2, value));
-            drawArrow(node1.getNodeCircle().getX(), node1.getNodeCircle().getY(),
-                    node2.getNodeCircle().getX(), node2.getNodeCircle().getY(),
-                    value);
-        }
-    }
-
-    // Створює сцену діалогового вікна.
-    private Stage createStage(String name, AnchorPane anchorPane) {
-        Stage dialogStage = new Stage();
-        dialogStage.setTitle(name);
-        dialogStage.initModality(Modality.WINDOW_MODAL);
-        dialogStage.initOwner(getStage());
-        dialogStage.setScene(new Scene(anchorPane));
-        return dialogStage;
     }
 
     // Малює стрілочку між вершинами графу
@@ -188,37 +181,6 @@ public class MainController {
         gcGraph.strokeLine(node2X, node2Y, x1, y1);
         gcGraph.strokeLine(node2X, node2Y, x2, y2);
     }
-
-    @FXML
-    private void createTZLP(ActionEvent actionEvent) {
-        // Визначення кількості продукції, що виробляється
-        double sumOutputNodes = nodes.filtered(f -> f.getType().equals(Node.NodeType.OUTPUT)).stream()
-                .mapToInt(Node::getResource).sum();
-        // Визначення кількості продукції, що споживається
-        double sumInputNodes = nodes.filtered(f -> f.getType().equals(Node.NodeType.INPUT)).stream()
-                .mapToInt(Node::getResource).sum();
-        // Якщо пункти не задані
-        if (sumInputNodes <= 0 || sumOutputNodes <= 0) {
-            Common.showErrorWindow("Спочатку задайте виробників та споживачів!", getStage());
-        }
-        // Якщо задача збалансована
-        else if (sumOutputNodes == sumInputNodes) {
-            tzlpModel.clear();
-            mainTabPane.getSelectionModel().select(tabTZLP);
-            tzlpModel.createTZLP(new ArrayList<> (nodes), new ArrayList<> (edges), sumInputNodes);
-            // Прорисовка таблиці транспортних витрат ТЗЛП
-            tzlpModel.drawColumnName();
-            tzlpModel.drawRowName();
-            tzlpModel.drawTable();
-            textAreaTZLP.setText(tzlpModel.typeListsToString());
-        }
-        // Якщо задача не збалансована
-        else {
-            Common.showErrorWindow("Збалансуйте задачу!\nВсього виробляється: " +
-                    sumOutputNodes + ";\n Всього споживається: " + sumInputNodes, getStage());
-        }
-    }
-
 
     // Збереження графу у файл
     public void saveGraph(ActionEvent actionEvent) {
@@ -269,6 +231,13 @@ public class MainController {
         }
     }
 
+    // змінює кольори графічного контексту графу
+    private void setGraphColors(Color cFill, Color cStroke, Integer lineWidth) {
+        gcGraph.setFill(cFill);
+        gcGraph.setStroke(cStroke);
+        gcGraph.setLineWidth(lineWidth);
+    }
+
     // Визначає колір та малює вершину
     private void determineColors(Node.NodeType type) {
         if (type == Node.NodeType.OUTPUT)
@@ -300,4 +269,52 @@ public class MainController {
         edges.clear();
     }
 
+    // Перетворює ТЗПП в ТЗЛП
+    @FXML
+    private void createTZLP() {
+        // Визначення кількості продукції, що виробляється
+        double sumOutputNodes = nodes.filtered(f -> f.getType().equals(Node.NodeType.OUTPUT)).stream()
+                .mapToInt(Node::getResource).sum();
+        // Визначення кількості продукції, що споживається
+        double sumInputNodes = nodes.filtered(f -> f.getType().equals(Node.NodeType.INPUT)).stream()
+                .mapToInt(Node::getResource).sum();
+        // Якщо пункти не задані
+        if (sumInputNodes <= 0 || sumOutputNodes <= 0) {
+            Common.showErrorWindow("Спочатку задайте виробників та споживачів!", getStage());
+        }
+        // Якщо задача збалансована
+        else if (sumOutputNodes == sumInputNodes) {
+            tzlpModel.clear();
+            mainTabPane.getSelectionModel().select(tabTZLP);
+            tzlpModel.createTZLP(new ArrayList<> (nodes), new ArrayList<> (edges), sumInputNodes);
+            // Прорисовка таблиці транспортних витрат ТЗЛП
+
+            tzlpModel.drawColumnName();
+            tzlpModel.drawRowName();
+            tzlpModel.drawTable();
+            textAreaTZLP.setText(tzlpModel.typeListsToString());
+        }
+        // Якщо задача не збалансована
+        else {
+            Common.showErrorWindow("Збалансуйте задачу!\nВсього виробляється: " +
+                    sumOutputNodes + ";\n Всього споживається: " + sumInputNodes, getStage());
+        }
+    }
+    @FXML
+    private void findDBRbyMPZK(){
+        if(textAreaTZLP.getText().length() > 0){
+
+            GraphicsContext gcMPZK = canvasMPZK.getGraphicsContext2D();
+            gcMPZK.clearRect(0,0,canvasMPZK.getWidth(),canvasMPZK.getHeight());
+
+            mainTabPane.getSelectionModel().select(tabMPZK);
+            MPZK = new MPZKmodel(tzlpModel);
+            MPZK.getSolution();
+
+
+            MPZK.drawSolution(gcMPZK, circleSize);
+            textAreaMPZK.setText(MPZK.getTransportCost());
+        }
+        else Common.showErrorWindow("Спочатку перетворіть в ТЗЛП!", getStage());
+    }
 }

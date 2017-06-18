@@ -39,7 +39,7 @@ public class TZLPmodel {
         this.size = size;
     }
 
-    public TableCell[][] getTableTZLP() {
+    TableCell[][] getTableTZLP() {
         return tableTZLP;
     }
 
@@ -47,7 +47,7 @@ public class TZLPmodel {
         this.tableTZLP = tableTZLP;
     }
 
-    public ArrayList<Node> getOutputNodes() {
+    ArrayList<Node> getOutputNodes() {
         return outputNodes;
     }
 
@@ -55,7 +55,7 @@ public class TZLPmodel {
         this.outputNodes = outputNodes;
     }
 
-    public ArrayList<Double> getOutputNodesResource() {
+    ArrayList<Double> getOutputNodesResource() {
         return outputNodesResource;
     }
 
@@ -63,7 +63,7 @@ public class TZLPmodel {
         this.outputNodesResource = outputNodesResource;
     }
 
-    public ArrayList<Node> getInputNodes() {
+    ArrayList<Node> getInputNodes() {
         return inputNodes;
     }
 
@@ -71,7 +71,7 @@ public class TZLPmodel {
         this.inputNodes = inputNodes;
     }
 
-    public ArrayList<Double> getInputNodesResource() {
+    ArrayList<Double> getInputNodesResource() {
         return inputNodesResource;
     }
 
@@ -85,6 +85,14 @@ public class TZLPmodel {
 
     public void setTransitNodes(ArrayList<Node> transitNodes) {
         this.transitNodes = transitNodes;
+    }
+
+    public GraphicsContext getGc() {
+        return gc;
+    }
+
+    public void setGc(GraphicsContext gc) {
+        this.gc = gc;
     }
 
     public void clear(){
@@ -195,4 +203,5 @@ public class TZLPmodel {
         gc.setFill(Color.BLACK);
         gc.fillText(text, size*x + 1, size*(y+1) - size/2.7);
     }
+
 }

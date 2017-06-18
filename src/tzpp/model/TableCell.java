@@ -40,4 +40,11 @@ public class TableCell extends AbstractCell{
         }
     }
 
+    Double getValue() {
+        return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
+    }
 }
