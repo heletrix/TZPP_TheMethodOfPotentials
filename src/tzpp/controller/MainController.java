@@ -51,10 +51,16 @@ public class MainController {
     private  Tab tabMPZK;
     @FXML
     private TextArea textAreaTZLP;
-    private static Double M = 1000.0;
 
+    // Дуже велике число
+    private static Double M = 1000.0;
     public static Double getM() {
         return M;
+    }
+    // розмір кружечків
+    private static Integer circleSize;
+    static Integer getCircleSize() {
+        return circleSize;
     }
 
     private GraphicsContext gcGraph;
@@ -63,8 +69,6 @@ public class MainController {
     private ObservableList<Edge> edges = FXCollections.observableArrayList();
     private TZLPmodel tzlpModel;
     private MPZKmodel MPZK;
-    // розмір кружечків
-    private Integer circleSize;
 
     public void initialize() {
         gcGraph = canvasGraphDraw.getGraphicsContext2D();
@@ -81,7 +85,7 @@ public class MainController {
                     e1.printStackTrace();
                 }
             } else if (event.isSecondaryButtonDown()) {
-                setGraphColors(Color.DARKBLUE, Color.WHITESMOKE, 5);
+                setGraphColors(Color.LIGHTBLUE, Color.WHITESMOKE, 5);
                 drawOval(addOval(0, 2, event.getX(), event.getY()));
             }
         });
@@ -161,7 +165,7 @@ public class MainController {
             gcGraph.fillOval(x, y, circleSize, circleSize);
         } else {
             gcGraph.fillOval(x, y, circleSize, circleSize);
-            gcGraph.strokeOval(x + circleSize, y - 10, 20, 20);
+            gcGraph.fillRect(x + circleSize, y - 10, 20, 20);
             gcGraph.setFill(Color.BLACK);
             gcGraph.fillText(number.toString(), x + circleSize, y + 5);
         }

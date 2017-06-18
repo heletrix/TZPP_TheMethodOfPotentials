@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Tab;
 import javafx.scene.paint.Color;
+import tzpp.controller.Common;
 import tzpp.controller.MainController;
 import tzpp.model.graphModel.Edge;
 import tzpp.model.graphModel.Node;
@@ -170,7 +171,7 @@ public class TZLPmodel {
         int i = 1;
         for (Node node : outputNodes) {
             node.draw(gc, size, Color.LIGHTBLUE, 0, i);
-            drawCell(Color.LIGHTGREEN, x, i++, outputNodesResource.get(i-2).toString());
+            Common.drawCell(gc, Color.LIGHTGREEN, x, i++, outputNodesResource.get(i-2).toString());
         }
     }
 
@@ -180,7 +181,7 @@ public class TZLPmodel {
         int i = 1;
         for (Node node : inputNodes) {
             node.draw(gc, size, Color.LIGHTBLUE, i, 0);
-            drawCell(Color.LIGHTCORAL, i++, y, inputNodesResource.get(i-2).toString());
+            Common.drawCell(gc,Color.LIGHTCORAL, i++, y, inputNodesResource.get(i-2).toString());
         }
     }
 
@@ -200,13 +201,6 @@ public class TZLPmodel {
         return text;
     }
 
-    private void drawCell(Color fillColor, int x, int y,  String text){
-        gc.setFill(Color.BLACK);
-        gc.fillRoundRect(size*x, size*y, size, size, 0, 0);
-        gc.setFill(fillColor);
-        gc.fillRoundRect(size*x + 1, size*y + 1, size - 1, size - 1, 0, 0);
-        gc.setFill(Color.BLACK);
-        gc.fillText(text, size*x + 1, size*(y+1) - size/2.7);
-    }
+
 
 }

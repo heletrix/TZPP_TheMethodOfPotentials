@@ -3,7 +3,9 @@ package tzpp.model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import tzpp.controller.Common;
 import tzpp.model.graphModel.Edge;
+import tzpp.model.graphModel.Node;
 
 import java.util.ArrayList;
 
@@ -91,29 +93,28 @@ public class MPZKmodel {
 
     public void drawSolution(GraphicsContext gc, Integer size) {
 
+        int it = 1;
+        for (Node node : TZLP.getInputNodes()) {
+            node.draw(gc, size, Color.LIGHTBLUE, it++, 0);
+        }
+        int ik = 1;
+        for (Node node : TZLP.getOutputNodes()) {
+            node.draw(gc, size, Color.LIGHTBLUE, 0, ik++);
+        }
         for (int i = 0; i < TZLP.getTableTZLP()[0].length; i++) {
+
+
             for (int j = 0; j < TZLP.getTableTZLP()[1].length; j++) {
                 Edge edge = getEdgeByIndexes(i, j);
                 String str = dbr.stream().filter(e -> e.getKey().getFirstNode().getId().equals(edge.getFirstNode().getId()) &&
                 e.getKey().getSecondNode().getId().equals(edge.getSecondNode().getId())).findFirst()
                         .map(n -> n.getValue().toString()).orElseGet(() -> " ");
-                drawMPZKCell(gc, size, Color.LIGHTYELLOW, j + 1, i + 1,
+                Common.drawCellWithTwoText(gc, Color.LIGHTYELLOW, j + 1, i + 1,
                         TZLP.getTableTZLP()[i][j].getCosts().toString(), str);
             }
         }
     }
 
-    private void drawMPZKCell(GraphicsContext gc, Integer size, Color fillColor, int x, int y, String topText, String bottomText) {
-        gc.setFill(Color.BLACK);
-        gc.fillRoundRect(size * x, size * y, size, size, 0, 0);
-        gc.setFill(fillColor);
-        gc.fillRoundRect(size * x + 1, size * y + 1, size - 1, size - 1, 0, 0);
-        gc.setFill(Color.DARKGREY);
-        if(topText.equals("Infinity")) topText = "M";
-        gc.fillText(topText, size * x + size / 4 + 2, size * y + 12);
-        gc.setFill(Color.BLACK);
-        gc.fillText(bottomText, size * x + 2, size * (y + 1) - 3);
-    }
 
     private Edge getEdgeByIndexes(int i, int j) {
         return new Edge(TZLP.getOutputNodes().get(i), TZLP.getInputNodes().get(j),

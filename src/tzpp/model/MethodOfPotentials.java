@@ -4,6 +4,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import tzpp.controller.Common;
+import tzpp.model.graphModel.Edge;
 import tzpp.model.graphModel.Node;
 import tzpp.model.graphModel.NodeCircle;
 
@@ -14,6 +16,10 @@ public class MethodOfPotentials {
     private Double fieldWidth;              // ширина графічної частини
     private Double fieldHeight;             // висота графічної частини
     private Integer size;                   // розмір квадратика
+    private Integer colsCount;            // кількість колонок
+    private Integer rowsCount;              // кількість рядків
+    private Integer cols;            // ітератор колонок
+    private Integer rows;              // ітератор рядків
 
     private ArrayList<Node> nodesA;         // Виробники
     private ArrayList<Node> nodesB;         // Споживачі
@@ -63,7 +69,6 @@ public class MethodOfPotentials {
         b = mpzk.getTZLP().getInputNodesResource();
         C = mpzk.getTZLP().getTableTZLP();
         X = mpzk.getX();
-        //   dbr = new ArrayList<Pair<Edge, Double>>(mpzk.getDbr());
         D = new Double[N][M];
         u = new Double[nodesA.size()];
         v = new Double[nodesB.size()];
@@ -75,18 +80,23 @@ public class MethodOfPotentials {
         size = mpzk.getTZLP().getSize();
         l1 = new ArrayList<>();
         l2 = new ArrayList<>();
+        colsCount = 0;
+        rowsCount = 0;
+        cols = 0;
+        rows = 0;
     }
 
     // Старт метода потенциалов
     public void findAndDraw() {
         drawBorders();
+
+
         while (!isOptimal) {
             // Під час визначення оцінок небазисних змінних ця змінна може набути хибного значення
             isOptimal = true;
             // Знайти потенціали
             findPotentials();
-            drawRowsHeader();
-            drawColumnsHeader();
+
             // Знайти оцінки небазисних змінних та максимальну серед них
             Pair<NodeCircle, Double> maxD = findMaxD();
             // Якщо рішення не оптимальне (а отже існує така додатня клітинка)
@@ -99,6 +109,15 @@ public class MethodOfPotentials {
                 // Шукаємо цикл
                 if (findCicle(i1, j1)) {
                     System.out.println(l1.toString() + " \n" + l2.toString());
+                    drawColumnsHeader();
+                    drawRowsHeader();
+                    drawTable();
+                    if(cols >= colsCount) {
+                        cols = 0;
+                        rows++;
+                    }
+                    else cols++;
+                    iteration++;
                     // вводимо то виводимо змінні з базису, перераховуємо цикл
                     reCalculate();
                 } else {
@@ -107,8 +126,16 @@ public class MethodOfPotentials {
                 }
             } else {
                 System.out.println("Знайдено оптимальне рішення");
+                drawColumnsHeader();
+                drawRowsHeader();
+                drawTable();
+                if(cols >= colsCount) {
+                    cols = 0;
+                    rows++;
+                }
+                else cols++;
             }
-            D[0][0] = 0.0;
+
             iteration++;
         }
     }
@@ -260,44 +287,78 @@ public class MethodOfPotentials {
         while (i < fieldWidth) {
             gc.strokeLine(i, 0, i, fieldHeight);
             i += size * (b.size() + 6);
+            colsCount++;
         }
         while (j < fieldHeight) {
             gc.strokeLine(0, j, fieldWidth, j);
             j += size * (a.size() + 6);
+            rowsCount++;
         }
     }
 
-    // Малює заголовок рядків
+
+
+    // Малює заголовок рядків таблиці
     private void drawRowsHeader() {
-        int dx = iteration * (a.size() + 6);
-//        int x = nodesB.size() + 1;
+
+        int dx = cols * (b.size() + 6);
+        int dy = rows * (a.size() + 6);
         int i = 3;
         for (Node node : nodesA) {
-            node.draw(gc, size, Color.LIGHTBLUE, dx + 1, i);
-            drawCell(Color.LIGHTGREEN, dx + 2, i++, u[i - 4].toString());
+            node.draw(gc, size, Color.LIGHTBLUE, dx + 1, dy + i);
+            Common.drawCell(gc, Color.LIGHTGREEN, dx + 2, dy + i++, u[i - 4].toString());
         }
     }
 
-    // Малює заголовок колонок
+    // Малює заголовок колонок таблиці
     private void drawColumnsHeader() {
-        int dx = iteration * (a.size() + 6);
-//        int x = nodesB.size() + 1;
+
+        int dx = cols * (b.size() + 6);
+        int dy = rows * (a.size() + 6);
         int i = 3;
+        gc.setLineWidth(10);
+        gc.fillText(("Ітерація # " + iteration ),dx * size + 40,dy + 80);
+
         for (Node node : nodesB) {
-            node.draw(gc, size, Color.LIGHTBLUE, dx + i, 1);
-            drawCell(Color.LIGHTGREEN, dx + i++, 2, v[i - 4].toString());
+            node.draw(gc, size, Color.LIGHTBLUE, dx + i,dy + 1);
+            Common.drawCell(gc, Color.LIGHTGREEN, dx + i++,dy + 2, v[i - 4].toString());
         }
     }
 
+    // Малює матрицю вартостей та оцінок
+    private void drawTable() {
+        int dx = cols * (b.size() + 6);
+        int dy = rows * (a.size() + 6);
+        for (int i = 0; i < X[0].length; i++) {
+            for (int j = 0; j < X[1].length; j++) {
+                if (X[i][j] == null) {
+                    Common.drawCellWithTwoText(gc, Color.LIGHTYELLOW, dx + j + 3, dy + i + 3,
+                            C[i][j].getCosts().toString(), D[i][j].toString());
+                } else {
+                    Common.drawCellWithTwoText(gc, Color.LIGHTPINK, dx + j + 3, dy + i + 3,
+                            C[i][j].getCosts().toString(), X[i][j].toString());
+                }
+            }
+        }
 
-    private void drawCell(Color fillColor, int x, int y, String text) {
-        gc.setFill(Color.BLACK);
-        gc.fillRoundRect(size * x, size * y, size, size, 0, 0);
-        gc.setFill(fillColor);
-        gc.fillRoundRect(size * x + 1, size * y + 1, size - 1, size - 1, 0, 0);
-        gc.setFill(Color.BLACK);
-        gc.fillText(text, size * x + 1, size * (y + 1) - size / 2.7);
+        gc.fillText(getTransportCost(), dx * size + 40, ((rows + 1) * (a.size() + 6)));
+    }
+
+        // Підрахунок транспортних витрат
+    private String getTransportCost(){
+        String summString = "Транспортні витрати :\n";
+        Double dbrSum = 0.0;
+        for (int i = 0; i < X[0].length; i++)
+        for (int j=0;j < X[1].length; j++){
+            if (X[i][j] != null){
+            Double currentSum = C[i][j].getCosts() * X[i][j];
+            summString += (currentSum.toString()) + " + " ;
+            dbrSum += currentSum;
+            }
+        }
+        int index = summString.length() - 3;
+        return summString.substring(0, index) + "\n = " + dbrSum;
+    }
     }
 
 
-}
