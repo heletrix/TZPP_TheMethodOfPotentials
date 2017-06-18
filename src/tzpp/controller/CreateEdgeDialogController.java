@@ -1,7 +1,6 @@
 package tzpp.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.sun.istack.internal.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,7 +8,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import tzpp.model.Node;
+import tzpp.model.graphModel.Edge;
+import tzpp.model.graphModel.Node;
+
+import java.util.Optional;
 
 public class CreateEdgeDialogController {
     @FXML
@@ -20,6 +22,7 @@ public class CreateEdgeDialogController {
     private ComboBox<Node> secondNodeComboBox;
 
     private ObservableList<Node> nodeList = FXCollections.observableArrayList();
+    private ObservableList<Edge> edgesList = FXCollections.observableArrayList();
 
     private Stage dialogStage;
     private boolean okClicked = false;
@@ -36,7 +39,8 @@ public class CreateEdgeDialogController {
         });
     }
 
-    void initData(ObservableList<Node> nodes){
+    void initData(ObservableList<Node> nodes, ObservableList<Edge> edges){
+        this.edgesList = edges;
         this.nodeList = nodes;
         firstNodeComboBox.setItems(nodeList);
         secondNodeComboBox.setItems(nodeList);
@@ -49,7 +53,6 @@ public class CreateEdgeDialogController {
     boolean isOkClicked(){
         return okClicked;
     }
-
     @FXML
     private void handleCancel() {
         dialogStage.close();
@@ -95,6 +98,13 @@ public class CreateEdgeDialogController {
             if (firstNodeComboBox.getSelectionModel().getSelectedIndex() ==
                     secondNodeComboBox.getSelectionModel().getSelectedIndex()){
                 errorMessage += "Оберіть різні пункти!\n";
+            }
+            @Nullable
+            Optional<Edge> edge;
+            edge = edgesList.stream().filter(ed -> ed.getFirstNode().equals(firstNodeComboBox.getSelectionModel().getSelectedItem()) &&
+                    ed.getSecondNode().equals(secondNodeComboBox.getSelectionModel().getSelectedItem())).findFirst();
+            if (edge != null && edge.isPresent()) {
+                    errorMessage += "Оберіть інші пункти. Таке сполучення вже існує!\n";
             }
         }
 

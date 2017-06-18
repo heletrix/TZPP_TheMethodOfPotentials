@@ -1,6 +1,8 @@
-package tzpp.model;
+package tzpp.model.graphModel;
 
-public class NodeCircle {
+import java.io.Serializable;
+
+public class NodeCircle implements Serializable {
     private double x;
     private double y;
 

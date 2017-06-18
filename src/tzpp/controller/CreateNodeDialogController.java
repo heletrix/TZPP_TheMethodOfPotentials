@@ -1,7 +1,5 @@
 package tzpp.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -86,7 +84,7 @@ public class CreateNodeDialogController {
                 errorMessage += "Кількість ресурсу дуже велика!\n";
             }
             if (inputNumber < 0 || inputNumber > 1000)
-            errorMessage += "Кількість ресурсу має бути від 0 до 300\n";
+            errorMessage += "Кількість ресурсу має бути від 0 до 1000\n";
         }
         if (errorMessage.length() == 0) {
             return true;

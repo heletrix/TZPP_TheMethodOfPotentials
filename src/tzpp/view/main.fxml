@@ -1,46 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane fx:id="mainAnchorPane" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tzpp.controller.MainController">
-
-      <SplitPane dividerPositions="0.3" prefHeight="322.0" prefWidth="424.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-
-          <AnchorPane maxWidth="180.0" minHeight="0.0" minWidth="180.0" prefWidth="180.0">
-
-                  <VBox layoutX="15.0" layoutY="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-
-                        <Button onAction="#addEdge" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0" text="Додати зв'язок" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-                           <VBox.margin>
-                              <Insets left="20.0" right="20.0" top="20.0" />
-                           </VBox.margin>
+<AnchorPane fx:id="mainAnchorPane" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tzpp.controller.MainController">
+    <TabPane fx:id="mainTabPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+             AnchorPane.topAnchor="0.0">
+        <Tab text="Графічний редактор">
+            <SplitPane dividerPositions="0.3" prefHeight="322.0" prefWidth="424.0" AnchorPane.bottomAnchor="0.0"
+                       AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <AnchorPane maxWidth="180.0" minHeight="0.0" minWidth="180.0" prefWidth="180.0">
+                    <VBox layoutX="15.0" layoutY="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#addEdge"
+                                prefHeight="25.0" prefWidth="140.0" text="Додати зв'язок" AnchorPane.leftAnchor="15.0"
+                                AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                            <VBox.margin>
+                                <Insets left="20.0" right="20.0" top="20.0"/>
+                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0" text="Сформувати ТЗЛП">
-                           <VBox.margin>
-                              <Insets left="20.0" right="20.0" top="20.0" />
-                           </VBox.margin>
+                        <Button mnemonicParsing="false" onAction="#createTZLP" prefHeight="25.0" prefWidth="140.0"
+                                text="Сформувати ТЗЛП">
+                            <VBox.margin>
+                                <Insets left="20.0" right="20.0" top="20.0"/>
+                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0" text="МПЗК">
-                           <VBox.margin>
-                              <Insets left="20.0" right="20.0" top="20.0" />
-                           </VBox.margin>
+                        <Button mnemonicParsing="false" onAction="#saveGraph" prefHeight="25.0" prefWidth="140.0"
+                                text="Зберегти граф">
+                            <VBox.margin>
+                                <Insets left="20.0" right="20.0" top="20.0"/>
+                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0" text="Метод потенціалів">
-                           <VBox.margin>
-                              <Insets left="20.0" right="20.0" top="20.0" />
-                           </VBox.margin>
+                        <Button mnemonicParsing="false" onAction="#loadGraph" prefHeight="25.0" prefWidth="140.0"
+                                text="Завантажити граф">
+                            <VBox.margin>
+                                <Insets left="20.0" right="20.0" top="20.0"/>
+                            </VBox.margin>
                         </Button>
-                  </VBox>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-
-                  <ScrollPane prefViewportHeight="1000.0" prefViewportWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-
-                        <Canvas fx:id="canvasGraphDraw" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-
-                  </ScrollPane>
-            </AnchorPane>
-      </SplitPane>
+                        <Button onAction="#clearGraphField" mnemonicParsing="false" prefHeight="25.0" prefWidth="140.0"
+                                text="Очистити поле">
+                            <VBox.margin>
+                                <Insets left="20.0" right="20.0" top="20.0"/>
+                            </VBox.margin>
+                        </Button>
+                    </VBox>
+                </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                    <ScrollPane prefViewportHeight="1000.0" prefViewportWidth="1000.0" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Canvas fx:id="canvasGraphDraw" height="1000.0" width="1000.0" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                    </ScrollPane>
+                </AnchorPane>
+            </SplitPane>
+        </Tab>
+        <Tab fx:id="tabTZLP" text="ТЗЛП">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <SplitPane dividerPositions="0.1" layoutX="70.0" layoutY="14.0" orientation="VERTICAL"
+                                   prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0"
+                                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <AnchorPane prefHeight="240.0" prefWidth="598.0">
+                                        <ScrollPane prefViewportHeight="200.0" prefViewportWidth="200.0"
+                                                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <Canvas fx:id="canvasTZLP" height="1200.0" layoutX="100.0"
+                                                        layoutY="-7.0" width="1200.0" AnchorPane.bottomAnchor="0.0"
+                                                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                        AnchorPane.topAnchor="0.0"/>
+                                        </ScrollPane>
+                                </AnchorPane>
+                                <AnchorPane maxHeight="100.0" minHeight="100.0" minWidth="0.0" prefHeight="330.0"
+                                            prefWidth="598.0">
+                                        <HBox maxHeight="100.0" prefHeight="100.0" prefWidth="200.0"
+                                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <TextArea fx:id="textAreaTZLP" prefHeight="100.0" prefWidth="494.0"/>
+                                                <Button mnemonicParsing="false" text="МПЗК">
+                                                    <HBox.margin>
+                                                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0"/>
+                                                    </HBox.margin>
+                                                </Button>
+                                        </HBox>
+                                </AnchorPane>
+                        </SplitPane>
+                </AnchorPane>
+        </Tab>
+        <Tab text="Початкова ДБР">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+        </Tab>
+        <Tab text="Розв'язок">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+        </Tab>
+    </TabPane>
 </AnchorPane>

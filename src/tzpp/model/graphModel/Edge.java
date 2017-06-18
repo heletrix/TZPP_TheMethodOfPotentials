@@ -1,6 +1,8 @@
-package tzpp.model;
+package tzpp.model.graphModel;
 
-public class Edge {
+import java.io.Serializable;
+
+public class Edge implements Serializable {
     private Node firstNode;
     private Node secondNode;
     private Integer value;
