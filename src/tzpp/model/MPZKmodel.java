@@ -101,15 +101,14 @@ public class MPZKmodel {
         for (Node node : TZLP.getOutputNodes()) {
             node.draw(gc, size, Color.LIGHTBLUE, 0, ik++);
         }
-        for (int i = 0; i < TZLP.getTableTZLP()[0].length; i++) {
-
-
-            for (int j = 0; j < TZLP.getTableTZLP()[1].length; j++) {
+        Common.setGc(gc);
+        for (int i = 0; i < TZLP.getTableTZLP().length; i++) {
+            for (int j = 0; j < TZLP.getTableTZLP()[0].length; j++) {
                 Edge edge = getEdgeByIndexes(i, j);
                 String str = dbr.stream().filter(e -> e.getKey().getFirstNode().getId().equals(edge.getFirstNode().getId()) &&
                 e.getKey().getSecondNode().getId().equals(edge.getSecondNode().getId())).findFirst()
                         .map(n -> n.getValue().toString()).orElseGet(() -> " ");
-                Common.drawCellWithTwoText(gc, Color.LIGHTYELLOW, j + 1, i + 1,
+                Common.drawCellWithTwoText( Color.LIGHTYELLOW, j + 1, i + 1,
                         TZLP.getTableTZLP()[i][j].getCosts().toString(), str);
             }
         }

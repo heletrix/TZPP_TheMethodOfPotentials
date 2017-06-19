@@ -147,11 +147,11 @@ public class TZLPmodel {
 
         // Знайдемо транспортні витрати
         Integer fieldWidth = inputNodes.size();
-        Integer fieldHeight = inputNodes.size();
-        tableTZLP = new TableCell[fieldWidth][fieldHeight];
-        for (Integer i = 0; i < fieldWidth; i++) {
+        Integer fieldHeight = outputNodes.size();
+        tableTZLP = new TableCell[fieldHeight][fieldWidth];
+        for (Integer i = 0; i < fieldHeight; i++) {
             Integer firstId = outputNodes.get(i).getId();
-            for (Integer j = 0; j < fieldHeight; j++) {
+            for (Integer j = 0; j < fieldWidth; j++) {
                 Integer secondId = inputNodes.get(j).getId();
                 if (firstId.equals(secondId)) {
                     tableTZLP[i][j] = new TableCell(gc, Color.LIGHTYELLOW, 0.0);
@@ -169,9 +169,10 @@ public class TZLPmodel {
     public void drawRowName() {
         int x = inputNodesResource.size()+1;
         int i = 1;
+        Common.setGc(gc);
         for (Node node : outputNodes) {
             node.draw(gc, size, Color.LIGHTBLUE, 0, i);
-            Common.drawCell(gc, Color.LIGHTGREEN, x, i++, outputNodesResource.get(i-2).toString());
+            Common.drawCell(Color.LIGHTGREEN, x, i++, outputNodesResource.get(i-2).toString());
         }
     }
 
@@ -179,16 +180,17 @@ public class TZLPmodel {
     public void drawColumnName() {
         int y = outputNodes.size()+1;
         int i = 1;
+        Common.setGc(gc);
         for (Node node : inputNodes) {
             node.draw(gc, size, Color.LIGHTBLUE, i, 0);
-            Common.drawCell(gc,Color.LIGHTCORAL, i++, y, inputNodesResource.get(i-2).toString());
+            Common.drawCell(Color.LIGHTCORAL, i++, y, inputNodesResource.get(i-2).toString());
         }
     }
 
     // Малює матрицю вартостей (транспортних витрат)
     public void drawTable(){
-        for (int i = 0; i < tableTZLP[0].length; i++) {
-            for (int j = 0; j < tableTZLP[1].length; j++) {
+        for (int i = 0; i < tableTZLP.length; i++) {
+            for (int j = 0; j < tableTZLP[0].length; j++) {
                 tableTZLP[i][j].draw(j+1, i+1, size, Color.LIGHTYELLOW);
             }
         }

@@ -12,7 +12,9 @@ import tzpp.model.graphModel.NodeCircle;
 import java.util.ArrayList;
 
 public class MethodOfPotentials {
-    private GraphicsContext gc;             // графічний контекст поля
+    private GraphicsContext gcTable;             // графічний контекст поля для таблиць
+    private GraphicsContext gcGraph;             // графічний контекст поля для графу
+    private Canvas canvasForGraph;
     private Double fieldWidth;              // ширина графічної частини
     private Double fieldHeight;             // висота графічної частини
     private Integer size;                   // розмір квадратика
@@ -56,11 +58,15 @@ public class MethodOfPotentials {
     private Pair<Integer, Integer> toBasis;
     private Pair<Integer, Integer> fromBasis;
 
-    public MethodOfPotentials(MPZKmodel mpzk, Canvas canvasMethodOfPotentials) {
-        gc = canvasMethodOfPotentials.getGraphicsContext2D();
-        fieldWidth = canvasMethodOfPotentials.getWidth();
-        fieldHeight = canvasMethodOfPotentials.getHeight();
-        gc.clearRect(0, 0, fieldWidth, fieldHeight);
+    private TZLPmodel tzlpModel;
+
+    public MethodOfPotentials(MPZKmodel mpzk, Canvas canvasForTable, Canvas canvasForGraph) {
+        gcTable = canvasForTable.getGraphicsContext2D();
+        fieldWidth = canvasForTable.getWidth();
+        fieldHeight = canvasForTable.getHeight();
+        gcGraph = canvasForGraph.getGraphicsContext2D();
+        gcGraph.clearRect(0, 0, canvasForGraph.getWidth(), canvasForGraph.getHeight());
+        gcTable.clearRect(0, 0, fieldWidth, fieldHeight);
         nodesA = mpzk.getTZLP().getOutputNodes();
         nodesB = mpzk.getTZLP().getInputNodes();
         N = nodesA.size();
@@ -84,6 +90,8 @@ public class MethodOfPotentials {
         rowsCount = 0;
         cols = 0;
         rows = 0;
+        Common.setGc(gcTable);
+        tzlpModel = mpzk.getTZLP();
     }
 
     // Старт метода потенциалов
@@ -112,11 +120,10 @@ public class MethodOfPotentials {
                     drawColumnsHeader();
                     drawRowsHeader();
                     drawTable();
-                    if(cols >= colsCount) {
+                    if (cols >= colsCount - 2) {
                         cols = 0;
                         rows++;
-                    }
-                    else cols++;
+                    } else cols++;
                     iteration++;
                     // вводимо то виводимо змінні з базису, перераховуємо цикл
                     reCalculate();
@@ -126,17 +133,15 @@ public class MethodOfPotentials {
                 }
             } else {
                 System.out.println("Знайдено оптимальне рішення");
+                if (iteration > ((colsCount) * (rowsCount) - colsCount - rowsCount)) {
+                    cols = 0;
+                    rows = 0;
+                    gcTable.clearRect(0, 0, fieldWidth, fieldHeight);
+                }
                 drawColumnsHeader();
                 drawRowsHeader();
                 drawTable();
-                if(cols >= colsCount) {
-                    cols = 0;
-                    rows++;
-                }
-                else cols++;
             }
-
-            iteration++;
         }
     }
 
@@ -218,7 +223,7 @@ public class MethodOfPotentials {
         counter = M * N; // максимальне число ітерацій
         l1.clear();
         l2.clear();
-        return  (lookHorizontally(i0, j0));
+        return (lookHorizontally(i0, j0));
     }
 
     // шукаємо шлях по горизонталі
@@ -280,85 +285,153 @@ public class MethodOfPotentials {
 
     // Малює клітинки
     private void drawBorders() {
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(2);
+        gcTable.setStroke(Color.BLACK);
+        gcTable.setLineWidth(2);
         Double i = 0.0;
         Double j = 0.0;
         while (i < fieldWidth) {
-            gc.strokeLine(i, 0, i, fieldHeight);
+            gcTable.strokeLine(i, 0, i, fieldHeight);
             i += size * (b.size() + 6);
             colsCount++;
         }
         while (j < fieldHeight) {
-            gc.strokeLine(0, j, fieldWidth, j);
+            gcTable.strokeLine(0, j, fieldWidth, j);
             j += size * (a.size() + 6);
             rowsCount++;
         }
     }
 
-
-
     // Малює заголовок рядків таблиці
     private void drawRowsHeader() {
-
+        Common.setGc(gcTable);
         int dx = cols * (b.size() + 6);
         int dy = rows * (a.size() + 6);
         int i = 3;
         for (Node node : nodesA) {
-            node.draw(gc, size, Color.LIGHTBLUE, dx + 1, dy + i);
-            Common.drawCell(gc, Color.LIGHTGREEN, dx + 2, dy + i++, u[i - 4].toString());
+            node.draw(gcTable, size, Color.LIGHTBLUE, dx + 1, dy + i);
+            Common.drawCell(Color.LIGHTGREEN, dx + 2, dy + i++, u[i - 4].toString());
         }
     }
 
     // Малює заголовок колонок таблиці
     private void drawColumnsHeader() {
-
+        Common.setGc(gcTable);
         int dx = cols * (b.size() + 6);
         int dy = rows * (a.size() + 6);
         int i = 3;
-        gc.setLineWidth(10);
-        gc.fillText(("Ітерація # " + iteration ),dx * size + 40,dy + 80);
+        gcTable.setLineWidth(10);
+        gcTable.fillText(("Ітерація # " + iteration), dx * size + 40, (dy) * size + 80);
 
         for (Node node : nodesB) {
-            node.draw(gc, size, Color.LIGHTBLUE, dx + i,dy + 1);
-            Common.drawCell(gc, Color.LIGHTGREEN, dx + i++,dy + 2, v[i - 4].toString());
+            node.draw(gcTable, size, Color.LIGHTBLUE, dx + i, dy + 1);
+            Common.drawCell(Color.LIGHTGREEN, dx + i++, dy + 2, v[i - 4].toString());
         }
     }
 
     // Малює матрицю вартостей та оцінок
     private void drawTable() {
+        Common.setGc(gcTable);
         int dx = cols * (b.size() + 6);
         int dy = rows * (a.size() + 6);
-        for (int i = 0; i < X[0].length; i++) {
-            for (int j = 0; j < X[1].length; j++) {
+        for (int i = 0; i < X.length; i++) {
+            for (int j = 0; j < X[0].length; j++) {
                 if (X[i][j] == null) {
-                    Common.drawCellWithTwoText(gc, Color.LIGHTYELLOW, dx + j + 3, dy + i + 3,
+                    Common.drawCellWithTwoText(Color.LIGHTYELLOW, dx + j + 3, dy + i + 3,
                             C[i][j].getCosts().toString(), D[i][j].toString());
                 } else {
-                    Common.drawCellWithTwoText(gc, Color.LIGHTPINK, dx + j + 3, dy + i + 3,
+                    Common.drawCellWithTwoText(Color.LIGHTPINK, dx + j + 3, dy + i + 3,
                             C[i][j].getCosts().toString(), X[i][j].toString());
                 }
             }
         }
 
-        gc.fillText(getTransportCost(), dx * size + 40, ((rows + 1) * (a.size() + 6)));
+        gcTable.fillText(getTransportCost(), (dx * size) + 40, (dy + X[0].length + 4) * size);
     }
 
-        // Підрахунок транспортних витрат
-    private String getTransportCost(){
+    // Підрахунок транспортних витрат
+    private String getTransportCost() {
+        Common.setGc(gcGraph);
         String summString = "Транспортні витрати :\n";
         Double dbrSum = 0.0;
+        int iter = 0;
         for (int i = 0; i < X[0].length; i++)
-        for (int j=0;j < X[1].length; j++){
-            if (X[i][j] != null){
-            Double currentSum = C[i][j].getCosts() * X[i][j];
-            summString += (currentSum.toString()) + " + " ;
-            dbrSum += currentSum;
+            for (int j = 0; j < X[1].length; j++) {
+                if (X[i][j] != null) {
+                    Double currentSum = C[i][j].getCosts() * X[i][j];
+                    summString += (currentSum.toString()) + " + ";
+                    if (iter > 6) {
+                        summString += "\n";
+                        iter = 0;
+                    }
+                    iter++;
+                    dbrSum += currentSum;
+                }
             }
-        }
         int index = summString.length() - 3;
-        return summString.substring(0, index) + "\n = " + dbrSum;
+        return summString.substring(0, index) + " = " + dbrSum;
     }
+
+    public void drawNodes(ArrayList<Node> nodes) {
+        Common.setGc(gcGraph);
+//        gcGraph.clearRect(0, 0, canvasForGraph.getWidth(), canvasForGraph.getHeight());
+        for (Node node : nodes) {
+            Common.determineColors(node.getType());
+            Common.drawOval(node);
+        }
+
     }
+
+    public void drawEdges(ArrayList<Edge> edges) {
+        Common.setGc(gcGraph);
+//        for (Edge edge : edges) {
+//            // Получаем id первого узла
+//            Integer firstId = edge.getFirstNode().getId();
+//            // Ищем индекс в массиве элементов
+//            for (int i = 0; i < nodesA.size(); i++) {
+//                // Если он существует
+//                if (nodesA.get(i).getId().equals(firstId)) {
+//                    // Получаем id второго узла
+//                    Integer secondId = edge.getSecondNode().getId();
+//                    if (!firstId.equals(secondId)) {
+//                        // Ищем индекс в массиве элементов
+//                        for (int j = 0; j < nodesB.size(); j++) {
+//                            // Если такой существует
+//                            if (X[i][j] != 0.0)
+//                                if (nodesB.get(j).getId().equals(secondId)) {
+//                                    // то рисуем
+//                                    Double x1 = edge.getFirstNode().getNodeCircle().getX();
+//                                    Double y1 = edge.getFirstNode().getNodeCircle().getY();
+//                                    Double x2 = edge.getSecondNode().getNodeCircle().getX();
+//                                    Double y2 = edge.getSecondNode().getNodeCircle().getY();
+//                                    String str = "[ " + X[i][j].toString() + " - " + C[i][j].getCosts().toString() + " ]";
+//                                    Common.drawArrow(x1, y1, x2, y2, str);
+//                                    break;
+//                                }
+//                        }
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+
+      for(int i = 0; i < nodesA.size(); i++){
+          for (int j = 0; j < nodesB.size(); j++){
+              Node node1 = nodesA.get(i);
+              Node node2 = nodesB.get(j);
+//              edges.stream().filter(n -> n.getFirstNode().equals(node1) && n.getSecondNode().equals(node2)).findFirst().orElseGet(() -> null);
+              Double x1 = node1.getNodeCircle().getX();
+              Double y1 = node1.getNodeCircle().getY();
+              Double x2 = node2.getNodeCircle().getX();
+              Double y2 = node2.getNodeCircle().getY();
+              if(X[i][j] != null && C[i][j].getCosts() > 0){
+                  String str = "[ " + X[i][j].toString() + " - " + C[i][j].getCosts().toString() + " ]";
+                  Common.drawArrow(x1,y1,x2,y2,str);
+              }
+
+          }
+      }
+    }
+
+}
 
 

@@ -28,7 +28,8 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class MainController {
-
+    @FXML
+    private Canvas canvasForResultGraph;
     @FXML
     private TextArea textAreaMPZK;
     @FXML
@@ -73,20 +74,22 @@ public class MainController {
     public void initialize() {
         gcGraph = canvasGraphDraw.getGraphicsContext2D();
         gcTZLP = canvasTZLP.getGraphicsContext2D();
-
         circleSize = 40;
+        Common.setGc(gcGraph);
         tzlpModel = new TZLPmodel(canvasTZLP, circleSize);
         // Обробник кліка по графічному полю
         canvasGraphDraw.setOnMousePressed(event -> {
+            Common.setGc(gcGraph);
             if (event.isPrimaryButtonDown()) {
+
                 try {
                     showCreateNodeDialog(event);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
             } else if (event.isSecondaryButtonDown()) {
-                setGraphColors(Color.LIGHTBLUE, Color.WHITESMOKE, 5);
-                drawOval(addOval(0, 2, event.getX(), event.getY()));
+                setGraphColors(Color.BLUE, Color.WHITESMOKE, 5);
+                Common.drawOval(addOval(0, 2, event.getX(), event.getY()));
             }
         });
 
@@ -116,10 +119,10 @@ public class MainController {
         if (controller.isOkClicked()) {
             // Якщо виробник
             if (controller.getIndexType() == 0)
-                setGraphColors(Color.YELLOWGREEN, Color.YELLOWGREEN, 5);
-            else // Якщо споживач
                 setGraphColors(Color.ORANGERED, Color.ORANGERED, 5);
-            drawOval(addOval(controller.getResourceNumber(), controller.getIndexType(), e.getX(), e.getY()));
+            else // Якщо споживач
+                setGraphColors(Color.YELLOWGREEN, Color.YELLOWGREEN, 5);
+            Common.drawOval(addOval(controller.getResourceNumber(), controller.getIndexType(), e.getX(), e.getY()));
         }
     }
     // Відображує вікно додавання ребра
@@ -140,9 +143,9 @@ public class MainController {
             Integer value = controller.getValueOfEdge();
             // малюємо стрілку та додаємо до списку ребер
             edges.add(new Edge(node1, node2, value));
-            drawArrow(node1.getNodeCircle().getX(), node1.getNodeCircle().getY(),
+            Common.drawArrow(node1.getNodeCircle().getX(), node1.getNodeCircle().getY(),
                     node2.getNodeCircle().getX(), node2.getNodeCircle().getY(),
-                    value);
+                    value.toString());
         }
     }
 
@@ -153,47 +156,6 @@ public class MainController {
         Node node = new Node(nodeCircle, number, Node.NodeType.values()[type], id);
         nodes.add(node);
         return node;
-    }
-
-    // Малює нову вершину
-    private void drawOval(Node node) {
-        Double x = node.getNodeCircle().getX() - circleSize / 2;
-        Double y = node.getNodeCircle().getY() - circleSize / 2;
-        Integer number = node.getResource();
-        Integer id = node.getId();
-        if (node.getType() == Node.NodeType.TRANSIT) {
-            gcGraph.fillOval(x, y, circleSize, circleSize);
-        } else {
-            gcGraph.fillOval(x, y, circleSize, circleSize);
-            gcGraph.fillRect(x + circleSize, y - 10, 20, 20);
-            gcGraph.setFill(Color.BLACK);
-            gcGraph.fillText(number.toString(), x + circleSize, y + 5);
-        }
-        gcGraph.fillText(id.toString(), x + (circleSize / 3), y - (circleSize / 3));
-    }
-
-    // Малює стрілочку між вершинами графу
-    private void drawArrow(double node1X, double node1Y, double node2X, double node2Y, Integer value) {
-        setGraphColors(Color.BLACK, Color.BLACK, 2);
-
-        double arrowAngle = Math.toRadians(45.0);
-        double arrowLength = 10.0;
-
-        double dx = node1X - node2X;
-        double dy = node1Y - node2Y;
-
-        double angle = Math.atan2(dy, dx);
-
-        double x1 = Math.cos(angle + arrowAngle) * arrowLength + node2X;
-        double y1 = Math.sin(angle + arrowAngle) * arrowLength + node2Y;
-
-        double x2 = Math.cos(angle - arrowAngle) * arrowLength + node2X;
-        double y2 = Math.sin(angle - arrowAngle) * arrowLength + node2Y;
-
-        gcGraph.fillText(value.toString(), (node1X + node2X) / 2 + 5, (node1Y + node2Y) / 2 - 5);
-        gcGraph.strokeLine(node1X, node1Y, node2X, node2Y);
-        gcGraph.strokeLine(node2X, node2Y, x1, y1);
-        gcGraph.strokeLine(node2X, node2Y, x2, y2);
     }
 
     // Збереження графу у файл
@@ -223,6 +185,7 @@ public class MainController {
 
     // Завантаження графу з файлу
     public void loadGraph(ActionEvent actionEvent) {
+        Common.setGc(gcGraph);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Завантажити граф");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Graph", "*.graph"));
@@ -255,10 +218,10 @@ public class MainController {
     // Визначає колір та малює вершину
     private void determineColors(Node.NodeType type) {
         if (type == Node.NodeType.OUTPUT)
-            setGraphColors(Color.YELLOWGREEN, Color.YELLOWGREEN, 5);
-        else if (type == Node.NodeType.INPUT)
             setGraphColors(Color.ORANGERED, Color.ORANGERED, 5);
-        else setGraphColors(Color.DARKBLUE, Color.WHITESMOKE, 5);
+        else if (type == Node.NodeType.INPUT)
+            setGraphColors(Color.YELLOWGREEN, Color.YELLOWGREEN, 5);
+        else setGraphColors(Color.BLUE, Color.WHITESMOKE, 5);
     }
 
     // Перемалювує поле графу
@@ -266,13 +229,13 @@ public class MainController {
         gcGraph.clearRect(0, 0, canvasGraphDraw.getWidth(), canvasGraphDraw.getHeight());
         for (Node node : nodes) {
             determineColors(node.getType());
-            drawOval(node);
+            Common.drawOval(node);
         }
         for (Edge edge : edges) {
             setGraphColors(Color.BLACK, Color.BLACK, 2);
-            drawArrow(edge.getFirstNode().getNodeCircle().getX(), edge.getFirstNode().getNodeCircle().getY(),
+            Common.drawArrow(edge.getFirstNode().getNodeCircle().getX(), edge.getFirstNode().getNodeCircle().getY(),
                     edge.getSecondNode().getNodeCircle().getX(), edge.getSecondNode().getNodeCircle().getY(),
-                    edge.getValue());
+                    edge.getValue().toString());
         }
     }
 
@@ -302,7 +265,6 @@ public class MainController {
             mainTabPane.getSelectionModel().select(tabTZLP);
             tzlpModel.createTZLP(new ArrayList<> (nodes), new ArrayList<> (edges), sumInputNodes);
             // Прорисовка таблиці транспортних витрат ТЗЛП
-
             tzlpModel.drawColumnName();
             tzlpModel.drawRowName();
             tzlpModel.drawTable();
@@ -332,9 +294,12 @@ public class MainController {
     @FXML
     private void solveProblem() {
            if(textAreaMPZK.getText().length() > 0){
-               MethodOfPotentials mp = new MethodOfPotentials(MPZK, canvasMethodOfPotentials);
+               MethodOfPotentials mp = new MethodOfPotentials(MPZK, canvasMethodOfPotentials, canvasForResultGraph);
                mainTabPane.getSelectionModel().select(tabMP);
                mp.findAndDraw();
+               mp.drawNodes(new ArrayList<>(nodes));
+               mp.drawEdges(new ArrayList<>(edges));
+
            } else {
                Common.showErrorWindow("Спочатку знайдіть початковий ДБР!", getStage());
            }
